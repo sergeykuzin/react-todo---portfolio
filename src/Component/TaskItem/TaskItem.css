@@ -1,0 +1,10 @@
+.task__item {
+  display: flex;
+  padding: 10px 20px 10px 20px;
+}
+.task__item:not(:last-child) {
+  margin-bottom: 20px;
+}
+.task__title {
+  margin-right: 20px;
+}
