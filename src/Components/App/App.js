@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import findFirstTagParentWithCssClass from '../../Utils/findFirstTagParentWithCssClass';
 import Header from '../Header/Header';
 import TaskList from '../TaskList/TaskList';
 import M from 'materialize-css';
@@ -28,6 +29,7 @@ class App extends Component {
       title: newTaskTitle,
       isDone: false,
       isImportant: false,
+      isOnTaskTextEditingMode: false,
     };
 
     this.setState(({ tasks }) => ({ tasks: [...tasks, newTodo] }));
@@ -35,21 +37,29 @@ class App extends Component {
     this.clearInputField();
   }
 
+  editTodo = (newTextTodo, event) => {
+    if (this.hasTaskInTaskList(newTextTodo)) {
+      this.showMessage('This task is already on the list');
+      return;
+    } 
+
+    const IDOfEditableTask = Number.parseInt(this.findTodoWrapper(event.target).dataset.id, 10);
+
+    this.setState(({ tasks }) => ({
+      tasks: tasks.map((task) => {
+        if (task.id === IDOfEditableTask) task.title = newTextTodo;
+        return task;
+      }),
+    }));
+  }
+
   removeTodo = ({ target }) => {
-    const IDTaskToBeDeleted = Number.parseInt(target.parentNode.parentNode.dataset.id, 10);
+    const IDTaskToBeDeleted = Number.parseInt(this.findTodoWrapper(target).dataset.id, 10);
 
     this.setState(({ tasks }) => ({
       tasks: tasks.filter(task => task.id !== IDTaskToBeDeleted),
     })); 
   }
-
-  findFirstTagParentWithCssClass = (children, parentTagName, parentCssClass) => {
-    if (children.parentNode.tagName === parentTagName 
-        && children.parentNode.classList.contains(parentCssClass)) return children.parentNode;
-    return this.findFirstTagParentWithCssClass(children.parentNode, parentTagName, parentCssClass);
-  }
-
-  findTodoWrapper = (children) => this.findFirstTagParentWithCssClass(children, 'LI', 'task__item');
 
   markAsDone = ({ target }) => {
     const IDTaskToBeMarkAsDone = Number.parseInt(this.findTodoWrapper(target).dataset.id, 10);
@@ -79,6 +89,19 @@ class App extends Component {
     this.setState({ tasks: newTasks });
   }
 
+  markAsEditable = ({ target }) => {
+    const IDTaskToBeMarkAsEditable = Number.parseInt(this.findTodoWrapper(target).dataset.id, 10);
+
+    const newTasks = this.state.tasks.map(task => {
+      if (task.id === IDTaskToBeMarkAsEditable) {
+        task.isOnTaskTextEditingMode = !task.isOnTaskTextEditingMode;
+      }
+      return task;
+    });
+
+    this.setState({ tasks: newTasks });
+  }
+
   setInputFieldValue = ({ target }) => {
     this.setState({ inputFieldValue: target.value });
   }
@@ -90,6 +113,8 @@ class App extends Component {
   hasTaskInTaskList = (todoTitle) => {
     return !!this.state.tasks.find((todo) => todo.title === todoTitle);
   }
+
+  findTodoWrapper = (children) => findFirstTagParentWithCssClass(children, 'LI', 'task__item');
 
   showMessage = (message) => {
     M.toast({
@@ -112,6 +137,8 @@ class App extends Component {
           handleRemoveTodo={ this.removeTodo }
           handleMarkAsDone={ this.markAsDone }
           handleMarkAsImportant={ this.markAsImportant }
+          handleMarkAsEditable= { this.markAsEditable }
+          handleEditTodo= { this.editTodo }
         />
       </div>
     );
