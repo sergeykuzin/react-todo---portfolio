@@ -10,7 +10,6 @@ class App extends Component {
     inputFieldValue: '',
   };
 
-
   addTodo = () => {
     const newTaskTitle = this.state.inputFieldValue;
 
@@ -44,8 +43,16 @@ class App extends Component {
     })); 
   }
 
+  findFirstTagParentWithCssClass = (children, parentTagName, parentCssClass) => {
+    if (children.parentNode.tagName === parentTagName 
+        && children.parentNode.classList.contains(parentCssClass)) return children.parentNode;
+    return this.findFirstTagParentWithCssClass(children.parentNode, parentTagName, parentCssClass);
+  }
+
+  findTodoWrapper = (children) => this.findFirstTagParentWithCssClass(children, 'LI', 'task__item');
+
   markAsDone = ({ target }) => {
-    const IDTaskToBeMarkAsDone = Number.parseInt(target.parentNode.parentNode.dataset.id, 10);
+    const IDTaskToBeMarkAsDone = Number.parseInt(this.findTodoWrapper(target).dataset.id, 10);
 
     const newTasks = this.state.tasks.map(task => {
       if (task.id === IDTaskToBeMarkAsDone) {
@@ -59,7 +66,7 @@ class App extends Component {
   }
 
   markAsImportant = ({ target }) => {
-    const IDTaskToBeMarkAsImportant = Number.parseInt(target.parentNode.parentNode.dataset.id, 10);
+    const IDTaskToBeMarkAsImportant = Number.parseInt(this.findTodoWrapper(target).dataset.id, 10);
      
     const newTasks = this.state.tasks.map(task => {
       if (task.id === IDTaskToBeMarkAsImportant) {

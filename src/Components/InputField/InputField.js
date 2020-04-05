@@ -16,6 +16,7 @@ function InputField(props) {
       className="col s9"
       type="text" 
       placeholder="Enter your task"
+      autoFocus
       value={ inputFieldValue }
       onChange={ handleSetInputFieldValue }
       onKeyPress={ handleKeyPress }

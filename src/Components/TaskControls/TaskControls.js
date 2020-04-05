@@ -11,20 +11,20 @@ function TaskControls(props) {
   return (
     <div className="task__controls-wrapper">
       <button
-        className="btn-small waves-effect waves-light"
+        className="done-btn btn-small waves-effect waves-light"
         type="button" 
         onClick={ handleMarkAsDone }
-      >done</button>
+      ><i className="material-icons">done</i></button>
       <button
-        className="btn-small waves-effect waves-light red"
+        className="delete-btn btn-small waves-effect waves-light red"
         type="button" 
         onClick={ handleRemoveTodo }
-      >delete</button>
+      ><i className="material-icons">delete</i></button>
       <button
-        className="btn-small waves-effect waves-light orange"
+        className="important-btn btn-small waves-effect waves-light orange"
         type="button" 
         onClick={ handleMarkAsImportant }
-      >important</button>
+      ><i className="material-icons">info_outline</i></button>
     </div>
   );
 }
